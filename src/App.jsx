@@ -11,14 +11,9 @@ import Dashboard from "./pages/Dashboard";
 import Health from "./pages/Health";
 import Energy from "./pages/Energy";
 import Water from "./pages/Water";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
-
-// Simple auth check - in production, use a proper auth system
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem("user");
-  return isAuthenticated ? children : <Navigate to="/auth" />;
-};
 
 const App = () => {
   return (
