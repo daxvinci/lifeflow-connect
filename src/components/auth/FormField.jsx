@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-export const FormField = ({ form, name, label, type = "text", placeholder }) => {
+export const CustomFormField = ({ form, name, label, type = "text", placeholder }) => {
   return (
     <FormField
       control={form.control}

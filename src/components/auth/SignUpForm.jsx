@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/schemas/authSchemas";
 import { useSignUp } from "@/hooks/useSignUp";
-import { FormField } from "./FormField";
+import { CustomFormField } from "./FormField";
 
 export const SignUpForm = () => {
   const { signUp } = useSignUp();
@@ -20,20 +20,20 @@ export const SignUpForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(signUp)} className="space-y-4">
-        <FormField
+        <CustomFormField
           form={form}
           name="name"
           label="Name"
           placeholder="Enter your name"
         />
-        <FormField
+        <CustomFormField
           form={form}
           name="email"
           label="Email"
           type="email"
           placeholder="Enter your email"
         />
-        <FormField
+        <CustomFormField
           form={form}
           name="password"
           label="Password"
