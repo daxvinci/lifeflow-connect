@@ -12,10 +12,19 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 export const SignUpForm = () => {
   const navigate = useNavigate();
   const form = useForm({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -36,7 +45,14 @@ export const SignUpForm = () => {
         },
       });
 
-      if (signUpError) throw signUpError;
+      if (signUpError) {
+        if (signUpError.message.includes("email_address_invalid")) {
+          toast.error("Please enter a valid email address");
+        } else {
+          toast.error(signUpError.message);
+        }
+        return;
+      }
 
       // Create a profile in the profiles table
       const { error: profileError } = await supabase
@@ -49,7 +65,10 @@ export const SignUpForm = () => {
           }
         ]);
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        toast.error(profileError.message);
+        return;
+      }
 
       toast.success("Successfully signed up! Please check your email for verification.");
       navigate("/dashboard");
