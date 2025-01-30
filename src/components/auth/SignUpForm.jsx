@@ -35,7 +35,7 @@ export const SignUpForm = () => {
   const onSubmit = async (data) => {
     try {
       // First, sign up the user
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -54,12 +54,18 @@ export const SignUpForm = () => {
         return;
       }
 
+      // Make sure we have the user data before proceeding
+      if (!authData.user) {
+        toast.error("Failed to create user account");
+        return;
+      }
+
       // Create a profile in the profiles table
       const { error: profileError } = await supabase
         .from('profiles')
         .insert([
           {
-            user_id: (await supabase.auth.getUser()).data.user.id,
+            user_id: authData.user.id,
             full_name: data.name,
             email: data.email,
           }
