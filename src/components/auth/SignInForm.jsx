@@ -29,12 +29,21 @@ export const SignInForm = () => {
         password: data.password,
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("Email not confirmed")) {
+          toast.error(
+            "Please confirm your email address before signing in. Check your inbox for a confirmation link."
+          );
+        } else {
+          toast.error(error.message || "Failed to sign in. Please try again.");
+        }
+        return;
+      }
 
       toast.success("Successfully signed in!");
       navigate("/dashboard");
     } catch (error) {
-      toast.error(error.message || "Failed to sign in. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 
