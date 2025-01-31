@@ -4,15 +4,15 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Heart, Zap, Droplets, ArrowRight, Users, CreditCard, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UsageMetrics {
-  health_usage: number;
-  energy_usage: number;
-  water_usage: number;
+  health_usage: number | null;
+  energy_usage: number | null;
+  water_usage: number | null;
 }
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const { data: usageMetrics, isLoading } = useQuery({
     queryKey: ['usageMetrics'],
     queryFn: async () => {
@@ -21,7 +21,7 @@ const Dashboard: React.FC = () => {
         .select('*')
         .order('recorded_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
       
       if (error) throw error;
       return data as UsageMetrics;
@@ -37,19 +37,19 @@ const Dashboard: React.FC = () => {
   const stats = [
     { 
       title: "Health Usage", 
-      value: isLoading ? "Loading..." : `${Math.round(usageMetrics?.health_usage || 0)}%`, 
+      value: isLoading ? "Loading..." : usageMetrics ? `${Math.round(usageMetrics.health_usage || 0)}%` : "No data", 
       icon: Heart, 
       color: "text-red-500" 
     },
     { 
       title: "Energy Usage", 
-      value: isLoading ? "Loading..." : `${Math.round(usageMetrics?.energy_usage || 0)} kWh`, 
+      value: isLoading ? "Loading..." : usageMetrics ? `${Math.round(usageMetrics.energy_usage || 0)} kWh` : "No data", 
       icon: Zap, 
       color: "text-yellow-500" 
     },
     { 
       title: "Water Usage", 
-      value: isLoading ? "Loading..." : `${Math.round(usageMetrics?.water_usage || 0)}L`, 
+      value: isLoading ? "Loading..." : usageMetrics ? `${Math.round(usageMetrics.water_usage || 0)}L` : "No data", 
       icon: Droplets, 
       color: "text-blue-500" 
     },
