@@ -16,9 +16,15 @@ const Dashboard = () => {
   const { data: usageMetrics, isLoading } = useQuery({
     queryKey: ['usageMetrics'],
     queryFn: async () => {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.user?.id) {
+        throw new Error('No authenticated user');
+      }
+
       const { data, error } = await supabase
         .from('usage_metrics')
         .select('*')
+        .eq('user_id', session.session.user.id)
         .order('recorded_at', { ascending: false })
         .limit(1)
         .maybeSingle();
