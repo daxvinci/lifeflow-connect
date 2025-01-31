@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { Heart, Zap, Droplets, ArrowRight, Users, CreditCard, TrendingUp } from "lucide-react";
+import { Heart, Zap, Droplets, TrendingUp, Users, CreditCard } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -12,33 +12,55 @@ interface UsageMetrics {
   water_usage: number | null;
 }
 
-const Dashboard = () => {
-  const { data: usageMetrics, isLoading } = useQuery({
-    queryKey: ['usageMetrics'],
-    queryFn: async () => {
-      const { data: session } = await supabase.auth.getSession();
-      if (!session?.session?.user?.id) {
-        throw new Error('No authenticated user');
-      }
+interface Profile {
+  username: string;
+  full_name: string;
+  avatar_url: string | null;
+}
 
+const Dashboard = () => {
+  const { data: session } = useQuery({
+    queryKey: ['session'],
+    queryFn: async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      return session;
+    }
+  });
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      if (!session?.user?.id) throw new Error('No user session');
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('username, full_name, avatar_url')
+        .eq('id', session.user.id)
+        .single();
+      
+      if (error) throw error;
+      return data as Profile;
+    },
+    enabled: !!session?.user?.id
+  });
+
+  const { data: usageMetrics, isLoading } = useQuery({
+    queryKey: ['usageMetrics', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) throw new Error('No user session');
       const { data, error } = await supabase
         .from('usage_metrics')
         .select('*')
-        .eq('user_id', session.session.user.id)
+        .eq('user_id', session.user.id)
         .order('recorded_at', { ascending: false })
         .limit(1)
         .maybeSingle();
       
       if (error) throw error;
       return data as UsageMetrics;
-    }
+    },
+    enabled: !!session?.user?.id
   });
-
-  const fadeInUp = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.5 }
-  };
 
   const stats = [
     { 
@@ -82,13 +104,18 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <motion.h1
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-bold text-primary mb-8"
+          className="mb-8"
         >
-          Welcome to Your Dashboard
-        </motion.h1>
+          <h1 className="text-4xl font-bold text-primary">
+            Welcome, {profile?.username || 'User'}! 👋
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Here's an overview of your sustainable lifestyle impact
+          </p>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stats.map((stat, index) => (
