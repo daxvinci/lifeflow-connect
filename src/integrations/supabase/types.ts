@@ -33,6 +33,33 @@ export type Database = {
         }
         Relationships: []
       }
+      usage_metrics: {
+        Row: {
+          energy_usage: number | null
+          health_usage: number | null
+          id: string
+          recorded_at: string | null
+          user_id: string
+          water_usage: number | null
+        }
+        Insert: {
+          energy_usage?: number | null
+          health_usage?: number | null
+          id?: string
+          recorded_at?: string | null
+          user_id: string
+          water_usage?: number | null
+        }
+        Update: {
+          energy_usage?: number | null
+          health_usage?: number | null
+          id?: string
+          recorded_at?: string | null
+          user_id?: string
+          water_usage?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

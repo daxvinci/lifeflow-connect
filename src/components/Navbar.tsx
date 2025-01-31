@@ -1,8 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Navbar = () => {
+  const { data: session } = useQuery({
+    queryKey: ['session'],
+    queryFn: async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      return session;
+    }
+  });
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -16,18 +27,37 @@ export const Navbar = () => {
             LifeFlow
           </Link>
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#health" className="text-gray-600 hover:text-primary transition-colors">
-              Health
-            </a>
-            <a href="#energy" className="text-gray-600 hover:text-primary transition-colors">
-              Energy
-            </a>
-            <a href="#water" className="text-gray-600 hover:text-primary transition-colors">
-              Water
-            </a>
-            <Link to="/auth">
-              <Button variant="default">Join Now</Button>
-            </Link>
+            {session ? (
+              <>
+                <Link to="/health" className="text-gray-600 hover:text-primary transition-colors">
+                  Health
+                </Link>
+                <Link to="/energy" className="text-gray-600 hover:text-primary transition-colors">
+                  Energy
+                </Link>
+                <Link to="/water" className="text-gray-600 hover:text-primary transition-colors">
+                  Water
+                </Link>
+                <Link to="/dashboard">
+                  <Button variant="default">Dashboard</Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <a href="#health" className="text-gray-600 hover:text-primary transition-colors">
+                  Health
+                </a>
+                <a href="#energy" className="text-gray-600 hover:text-primary transition-colors">
+                  Energy
+                </a>
+                <a href="#water" className="text-gray-600 hover:text-primary transition-colors">
+                  Water
+                </a>
+                <Link to="/auth">
+                  <Button variant="default">Join Now</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

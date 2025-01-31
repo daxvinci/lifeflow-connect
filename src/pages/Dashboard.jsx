@@ -3,8 +3,25 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Heart, Zap, Droplets, TrendingUp, Users, CreditCard } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
+  const { data: usageMetrics, isLoading } = useQuery({
+    queryKey: ['usageMetrics'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('usage_metrics')
+        .select('*')
+        .order('recorded_at', { ascending: false })
+        .limit(1)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -12,12 +29,42 @@ const Dashboard = () => {
   };
 
   const stats = [
-    { title: "Total Consultations", value: "1,234", icon: Heart, color: "text-red-500" },
-    { title: "Energy Credits", value: "567 kWh", icon: Zap, color: "text-yellow-500" },
-    { title: "Water Saved", value: "890L", icon: Droplets, color: "text-blue-500" },
-    { title: "Impact Score", value: "92", icon: TrendingUp, color: "text-green-500" },
-    { title: "Community Members", value: "5,678", icon: Users, color: "text-purple-500" },
-    { title: "Total Savings", value: "₦123,456", icon: CreditCard, color: "text-indigo-500" }
+    { 
+      title: "Health Usage", 
+      value: isLoading ? "Loading..." : `${Math.round(usageMetrics?.health_usage || 0)}%`, 
+      icon: Heart, 
+      color: "text-red-500" 
+    },
+    { 
+      title: "Energy Usage", 
+      value: isLoading ? "Loading..." : `${Math.round(usageMetrics?.energy_usage || 0)} kWh`, 
+      icon: Zap, 
+      color: "text-yellow-500" 
+    },
+    { 
+      title: "Water Usage", 
+      value: isLoading ? "Loading..." : `${Math.round(usageMetrics?.water_usage || 0)}L`, 
+      icon: Droplets, 
+      color: "text-blue-500" 
+    },
+    { 
+      title: "Impact Score", 
+      value: "92", 
+      icon: TrendingUp, 
+      color: "text-green-500" 
+    },
+    { 
+      title: "Community Members", 
+      value: "5,678", 
+      icon: Users, 
+      color: "text-purple-500" 
+    },
+    { 
+      title: "Total Savings", 
+      value: "₦123,456", 
+      icon: CreditCard, 
+      color: "text-indigo-500" 
+    }
   ];
 
   return (
