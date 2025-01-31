@@ -7,6 +7,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
+import Health from "./pages/Health";
+import Energy from "./pages/Energy";
+import Water from "./pages/Water";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +26,38 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/health"
+                element={
+                  <ProtectedRoute>
+                    <Health />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/energy"
+                element={
+                  <ProtectedRoute>
+                    <Energy />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/water"
+                element={
+                  <ProtectedRoute>
+                    <Water />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
