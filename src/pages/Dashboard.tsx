@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { Heart, Zap, Droplets, ArrowRight, Users, CreditCard } from "lucide-react";
+import { Heart, Zap, Droplets, ArrowRight, Users, CreditCard, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 
