@@ -44,15 +44,15 @@ export const Navbar = () => {
               </>
             ) : (
               <>
-                <a href="#health" className="text-gray-600 hover:text-primary transition-colors">
+                <Link to="/auth" className="text-gray-600 hover:text-primary transition-colors">
                   Health
-                </a>
-                <a href="#energy" className="text-gray-600 hover:text-primary transition-colors">
+                </Link>
+                <Link to="/auth" className="text-gray-600 hover:text-primary transition-colors">
                   Energy
-                </a>
-                <a href="#water" className="text-gray-600 hover:text-primary transition-colors">
+                </Link>
+                <Link to="/auth" className="text-gray-600 hover:text-primary transition-colors">
                   Water
-                </a>
+                </Link>
                 <Link to="/auth">
                   <Button variant="default">Join Now</Button>
                 </Link>
