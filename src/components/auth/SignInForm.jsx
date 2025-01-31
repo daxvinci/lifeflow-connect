@@ -32,8 +32,23 @@ export const SignInForm = () => {
       if (error) {
         if (error.message.includes("Email not confirmed")) {
           toast.error(
-            "Please confirm your email address before signing in. Check your inbox for a confirmation link."
+            "Please confirm your email address before signing in. Check your inbox for a confirmation link.",
+            {
+              duration: 6000,
+            }
           );
+          
+          // Offer to resend confirmation email
+          const { error: resendError } = await supabase.auth.resend({
+            type: 'signup',
+            email: data.email,
+          });
+          
+          if (!resendError) {
+            toast.info("A new confirmation email has been sent to your address.", {
+              duration: 4000,
+            });
+          }
         } else {
           toast.error(error.message || "Failed to sign in. Please try again.");
         }
