@@ -5,69 +5,67 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import NotFound from "./pages/NotFound";
-import Dashboard from "./pages/Dashboard";
-import Health from "./pages/Health";
-import Energy from "./pages/Energy";
-import Water from "./pages/Water";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import Index from "@/pages/Index";
+import Auth from "@/pages/Auth";
+import NotFound from "@/pages/NotFound";
+import Dashboard from "@/pages/Dashboard";
+import Health from "@/pages/Health";
+import Energy from "@/pages/Energy";
+import Water from "@/pages/Water";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Navbar />
-            <div className="pt-16"> {/* Add padding to account for fixed navbar */}
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/health"
-                  element={
-                    <ProtectedRoute>
-                      <Health />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/energy"
-                  element={
-                    <ProtectedRoute>
-                      <Energy />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/water"
-                  element={
-                    <ProtectedRoute>
-                      <Water />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Navbar />
+          <div className="pt-16">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/health"
+                element={
+                  <ProtectedRoute>
+                    <Health />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/energy"
+                element={
+                  <ProtectedRoute>
+                    <Energy />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/water"
+                element={
+                  <ProtectedRoute>
+                    <Water />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 };
 
