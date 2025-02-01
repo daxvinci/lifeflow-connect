@@ -11,10 +11,16 @@ const Dashboard = () => {
   const { data: usageMetrics, isLoading } = useQuery({
     queryKey: ['usageMetrics'],
     queryFn: async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const session = sessionData.session;
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      if (!session?.user?.id) throw new Error('No user session found');
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        throw sessionError;
+      }
+
+      if (!session?.user?.id) {
+        throw new Error('No user session found');
+      }
 
       const { data, error } = await supabase
         .from('usage_metrics')
@@ -29,13 +35,30 @@ const Dashboard = () => {
         throw error;
       }
 
-      // If no data exists, return default values
-      return data || {
-        health_usage: 0,
-        energy_usage: 0,
-        water_usage: 0,
-        recorded_at: new Date().toISOString()
-      };
+      // If no data exists, create initial metrics
+      if (!data) {
+        const { data: newData, error: insertError } = await supabase
+          .from('usage_metrics')
+          .insert([
+            {
+              user_id: session.user.id,
+              health_usage: 0,
+              energy_usage: 0,
+              water_usage: 0
+            }
+          ])
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error('Error creating initial metrics:', insertError);
+          throw insertError;
+        }
+
+        return newData;
+      }
+
+      return data;
     }
   });
 
