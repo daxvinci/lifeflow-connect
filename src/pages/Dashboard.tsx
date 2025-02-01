@@ -48,7 +48,7 @@ const Dashboard = () => {
             }
           ])
           .select()
-          .single();
+          .maybeSingle();
 
         if (insertError) {
           console.error('Error creating initial metrics:', insertError);
