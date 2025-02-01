@@ -1,20 +1,17 @@
-import React from "react";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
 import { SignInForm } from "@/components/auth/SignInForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
-import { motion } from "framer-motion";
 
 const Auth = () => {
+  const [activeTab, setActiveTab] = useState("signin");
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10 px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        <Tabs defaultValue="signin" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+    <div className="container mx-auto px-4 flex items-center justify-center min-h-[calc(100vh-4rem)]">
+      <Card className="w-full max-w-md p-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
@@ -25,7 +22,7 @@ const Auth = () => {
             <SignUpForm />
           </TabsContent>
         </Tabs>
-      </motion.div>
+      </Card>
     </div>
   );
 };
