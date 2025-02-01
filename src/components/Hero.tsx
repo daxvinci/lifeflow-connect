@@ -22,7 +22,7 @@ export const Hero = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto"
         >
-          Transforming Nigeria through innovative solutions in healthcare, energy, and water management
+          Empowering Nigeria through sustainable solutions in healthcare, energy, and water management
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

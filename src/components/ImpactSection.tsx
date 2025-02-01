@@ -5,7 +5,7 @@ const impacts = [
   {
     title: "Healthcare",
     icon: Heart,
-    description: "Accessible telehealth services through microcredit systems",
+    description: "Accessible healthcare services through microcredit systems",
     stat: "50K+",
     label: "Consultations Funded",
   },
@@ -19,9 +19,9 @@ const impacts = [
   {
     title: "Water",
     icon: Droplets,
-    description: "Community-driven water cleanup and recycling initiatives",
+    description: "Community-driven water management and conservation initiatives",
     stat: "1M+",
-    label: "Liters Cleaned",
+    label: "Liters Saved",
   },
 ];
 

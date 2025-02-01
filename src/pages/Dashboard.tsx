@@ -5,19 +5,13 @@ import { Card } from "@/components/ui/card";
 import { Heart, Zap, Droplets, TrendingUp, Users, CreditCard } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Session } from '@supabase/supabase-js';
 
 const Dashboard = () => {
   const { data: usageMetrics, isLoading } = useQuery({
     queryKey: ['usageMetrics'],
     queryFn: async () => {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (sessionError) {
-        console.error('Session error:', sessionError);
-        throw sessionError;
-      }
-
       if (!session?.user?.id) {
         throw new Error('No user session found');
       }
@@ -35,7 +29,6 @@ const Dashboard = () => {
         throw error;
       }
 
-      // If no data exists, create initial metrics
       if (!data) {
         const { data: newData, error: insertError } = await supabase
           .from('usage_metrics')
@@ -144,7 +137,7 @@ const Dashboard = () => {
             >
               <Heart className="h-12 w-12 text-red-500 mb-4" />
               <h3 className="text-xl font-semibold mb-2">Healthcare</h3>
-              <p className="text-gray-600">Access telehealth services and manage your health records</p>
+              <p className="text-gray-600">Access health services and manage your health records</p>
             </motion.div>
           </Link>
 
@@ -156,7 +149,7 @@ const Dashboard = () => {
             >
               <Zap className="h-12 w-12 text-yellow-500 mb-4" />
               <h3 className="text-xl font-semibold mb-2">Energy</h3>
-              <p className="text-gray-600">Monitor your solar usage and manage payments</p>
+              <p className="text-gray-600">Monitor your energy usage and manage payments</p>
             </motion.div>
           </Link>
 
@@ -168,7 +161,7 @@ const Dashboard = () => {
             >
               <Droplets className="h-12 w-12 text-blue-500 mb-4" />
               <h3 className="text-xl font-semibold mb-2">Water</h3>
-              <p className="text-gray-600">Track water cleanup progress and contributions</p>
+              <p className="text-gray-600">Track water usage and manage resources</p>
             </motion.div>
           </Link>
         </div>
