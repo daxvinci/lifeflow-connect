@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { NavLinks } from "./navbar/NavLinks";
+import { MobileMenu } from "./navbar/MobileMenu";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,7 +28,7 @@ export const Navbar = () => {
         .from('profiles')
         .select('username, avatar_url')
         .eq('id', session.user.id)
-        .maybeSingle(); // Changed from .single() to .maybeSingle()
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -62,120 +64,17 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {session ? (
-              <>
-                <Link to="/health" className="text-gray-600 hover:text-primary transition-colors">
-                  Health
-                </Link>
-                <Link to="/energy" className="text-gray-600 hover:text-primary transition-colors">
-                  Energy
-                </Link>
-                <Link to="/water" className="text-gray-600 hover:text-primary transition-colors">
-                  Water
-                </Link>
-                <Link to="/dashboard">
-                  <Button variant="default">
-                    {profile?.username || 'Dashboard'}
-                  </Button>
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link to="/auth" className="text-gray-600 hover:text-primary transition-colors">
-                  Health
-                </Link>
-                <Link to="/auth" className="text-gray-600 hover:text-primary transition-colors">
-                  Energy
-                </Link>
-                <Link to="/auth" className="text-gray-600 hover:text-primary transition-colors">
-                  Water
-                </Link>
-                <Link to="/auth">
-                  <Button variant="default">Join Now</Button>
-                </Link>
-              </>
-            )}
+            <NavLinks session={session} profile={profile} />
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:hidden pb-4"
-          >
-            <div className="flex flex-col space-y-4">
-              {session ? (
-                <>
-                  <Link
-                    to="/health"
-                    className="text-gray-600 hover:text-primary transition-colors px-4 py-2 rounded-md hover:bg-gray-100"
-                    onClick={toggleMenu}
-                  >
-                    Health
-                  </Link>
-                  <Link
-                    to="/energy"
-                    className="text-gray-600 hover:text-primary transition-colors px-4 py-2 rounded-md hover:bg-gray-100"
-                    onClick={toggleMenu}
-                  >
-                    Energy
-                  </Link>
-                  <Link
-                    to="/water"
-                    className="text-gray-600 hover:text-primary transition-colors px-4 py-2 rounded-md hover:bg-gray-100"
-                    onClick={toggleMenu}
-                  >
-                    Water
-                  </Link>
-                  <Link
-                    to="/dashboard"
-                    className="px-4 py-2"
-                    onClick={toggleMenu}
-                  >
-                    <Button variant="default" className="w-full">
-                      {profile?.username || 'Dashboard'}
-                    </Button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/auth"
-                    className="text-gray-600 hover:text-primary transition-colors px-4 py-2 rounded-md hover:bg-gray-100"
-                    onClick={toggleMenu}
-                  >
-                    Health
-                  </Link>
-                  <Link
-                    to="/auth"
-                    className="text-gray-600 hover:text-primary transition-colors px-4 py-2 rounded-md hover:bg-gray-100"
-                    onClick={toggleMenu}
-                  >
-                    Energy
-                  </Link>
-                  <Link
-                    to="/auth"
-                    className="text-gray-600 hover:text-primary transition-colors px-4 py-2 rounded-md hover:bg-gray-100"
-                    onClick={toggleMenu}
-                  >
-                    Water
-                  </Link>
-                  <Link
-                    to="/auth"
-                    className="px-4 py-2"
-                    onClick={toggleMenu}
-                  >
-                    <Button variant="default" className="w-full">
-                      Join Now
-                    </Button>
-                  </Link>
-                </>
-              )}
-            </div>
-          </motion.div>
-        )}
+        <MobileMenu 
+          isOpen={isMenuOpen}
+          session={session}
+          profile={profile}
+          onItemClick={toggleMenu}
+        />
       </div>
     </motion.nav>
   );
