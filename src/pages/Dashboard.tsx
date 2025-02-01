@@ -5,13 +5,16 @@ import { Card } from "@/components/ui/card";
 import { Heart, Zap, Droplets, TrendingUp, Users, CreditCard } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Session } from '@supabase/supabase-js';
 
 const Dashboard = () => {
   const { data: usageMetrics, isLoading } = useQuery({
     queryKey: ['usageMetrics'],
     queryFn: async () => {
-      const { data: session } = await supabase.auth.getSession();
-      if (!session?.user) throw new Error('No user session found');
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData.session;
+      
+      if (!session?.user?.id) throw new Error('No user session found');
 
       const { data, error } = await supabase
         .from('usage_metrics')
@@ -21,7 +24,11 @@ const Dashboard = () => {
         .limit(1)
         .maybeSingle();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching metrics:', error);
+        throw error;
+      }
+
       // If no data exists, return default values
       return data || {
         health_usage: 0,
@@ -31,12 +38,6 @@ const Dashboard = () => {
       };
     }
   });
-
-  const fadeInUp = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.5 }
-  };
 
   const stats = [
     { 
