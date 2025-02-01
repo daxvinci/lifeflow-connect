@@ -11,24 +11,59 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+
+interface SignInFormValues {
+  email: string;
+  password: string;
+}
 
 export const SignInForm = () => {
   const navigate = useNavigate();
-  const form = useForm({
+  const form = useForm<SignInFormValues>({
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = async (data: { email: string; password: string }) => {
+  const onSubmit = async (data: SignInFormValues) => {
     try {
-      // TODO: Implement actual authentication
-      console.log("Sign in:", data);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error) {
+        if (error.message.includes("Email not confirmed")) {
+          toast.error(
+            "Please confirm your email address before signing in. Check your inbox for a confirmation link.",
+            {
+              duration: 6000,
+            }
+          );
+          
+          // Offer to resend confirmation email
+          const { error: resendError } = await supabase.auth.resend({
+            type: 'signup',
+            email: data.email,
+          });
+          
+          if (!resendError) {
+            toast.info("A new confirmation email has been sent to your address.", {
+              duration: 4000,
+            });
+          }
+        } else {
+          toast.error(error.message || "Failed to sign in. Please try again.");
+        }
+        return;
+      }
+
       toast.success("Successfully signed in!");
       navigate("/dashboard");
     } catch (error) {
-      toast.error("Failed to sign in. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 

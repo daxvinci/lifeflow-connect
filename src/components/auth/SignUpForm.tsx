@@ -1,20 +1,21 @@
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signUpSchema } from "@/schemas/authSchemas";
+import { useSignUp } from "@/hooks/useSignUp";
+import { CustomFormField } from "./FormField";
+
+interface SignUpFormValues {
+  name: string;
+  email: string;
+  password: string;
+}
 
 export const SignUpForm = () => {
-  const navigate = useNavigate();
-  const form = useForm({
+  const { signUp } = useSignUp();
+  const form = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -22,58 +23,28 @@ export const SignUpForm = () => {
     },
   });
 
-  const onSubmit = async (data: { name: string; email: string; password: string }) => {
-    try {
-      // TODO: Implement actual registration
-      console.log("Sign up:", data);
-      toast.success("Successfully signed up!");
-      navigate("/dashboard");
-    } catch (error) {
-      toast.error("Failed to sign up. Please try again.");
-    }
-  };
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
+      <form onSubmit={form.handleSubmit(signUp)} className="space-y-4">
+        <CustomFormField
+          form={form}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter your name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Name"
+          placeholder="Enter your name"
         />
-        <FormField
-          control={form.control}
+        <CustomFormField
+          form={form}
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input type="email" placeholder="Enter your email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Email"
+          type="email"
+          placeholder="Enter your email"
         />
-        <FormField
-          control={form.control}
+        <CustomFormField
+          form={form}
           name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="Create a password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Password"
+          type="password"
+          placeholder="Create a password"
         />
         <Button type="submit" className="w-full">
           Sign Up
