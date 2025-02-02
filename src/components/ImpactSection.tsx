@@ -5,23 +5,23 @@ const impacts = [
   {
     title: "Healthcare",
     icon: Heart,
-    description: "Accessible healthcare services through microcredit systems",
+    description: "Quality healthcare services through flexible payment systems",
     stat: "50K+",
     label: "Consultations Funded",
   },
   {
     title: "Energy",
     icon: Zap,
-    description: "Affordable solar solutions with pay-as-you-go flexibility",
+    description: "Reliable power solutions with flexible payment options",
     stat: "10K+",
-    label: "Solar Systems Deployed",
+    label: "Systems Deployed",
   },
   {
     title: "Water",
     icon: Droplets,
-    description: "Community-driven water management and conservation initiatives",
+    description: "Sustainable water management and distribution systems",
     stat: "1M+",
-    label: "Liters Saved",
+    label: "Liters Distributed",
   },
 ];
 

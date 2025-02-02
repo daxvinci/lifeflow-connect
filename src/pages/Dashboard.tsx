@@ -137,7 +137,7 @@ const Dashboard = () => {
             >
               <Heart className="h-12 w-12 text-red-500 mb-4" />
               <h3 className="text-xl font-semibold mb-2">Healthcare</h3>
-              <p className="text-gray-600">Access health services and manage your health records</p>
+              <p className="text-gray-600">Manage your health services and records</p>
             </motion.div>
           </Link>
 
@@ -149,7 +149,7 @@ const Dashboard = () => {
             >
               <Zap className="h-12 w-12 text-yellow-500 mb-4" />
               <h3 className="text-xl font-semibold mb-2">Energy</h3>
-              <p className="text-gray-600">Monitor your energy usage and manage payments</p>
+              <p className="text-gray-600">Track consumption and manage services</p>
             </motion.div>
           </Link>
 
@@ -161,7 +161,7 @@ const Dashboard = () => {
             >
               <Droplets className="h-12 w-12 text-blue-500 mb-4" />
               <h3 className="text-xl font-semibold mb-2">Water</h3>
-              <p className="text-gray-600">Track water usage and manage resources</p>
+              <p className="text-gray-600">Monitor usage and manage supply</p>
             </motion.div>
           </Link>
         </div>
