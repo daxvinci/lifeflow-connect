@@ -1,59 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Card } from "@/components/ui/card";
 import { Heart, Zap, Droplets, TrendingUp, Users, CreditCard } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { StatsCard } from "@/components/dashboard/StatsCard";
+import { ServiceCard } from "@/components/dashboard/ServiceCard";
+import { useMetrics } from "@/hooks/useMetrics";
 
 const Dashboard = () => {
-  const { data: usageMetrics, isLoading } = useQuery({
-    queryKey: ['usageMetrics'],
-    queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session?.user?.id) {
-        throw new Error('No user session found');
-      }
-
-      const { data, error } = await supabase
-        .from('usage_metrics')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .order('recorded_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      
-      if (error) {
-        console.error('Error fetching metrics:', error);
-        throw error;
-      }
-
-      if (!data) {
-        const { data: newData, error: insertError } = await supabase
-          .from('usage_metrics')
-          .insert([
-            {
-              user_id: session.user.id,
-              health_usage: 0,
-              energy_usage: 0,
-              water_usage: 0
-            }
-          ])
-          .select()
-          .maybeSingle();
-
-        if (insertError) {
-          console.error('Error creating initial metrics:', insertError);
-          throw insertError;
-        }
-
-        return newData;
-      }
-
-      return data;
-    }
-  });
+  const { data: usageMetrics, isLoading } = useMetrics();
 
   const stats = [
     { 
@@ -94,6 +47,30 @@ const Dashboard = () => {
     }
   ];
 
+  const services = [
+    {
+      to: "/health",
+      icon: Heart,
+      title: "Healthcare",
+      description: "Manage your health services and records",
+      iconColor: "text-red-500"
+    },
+    {
+      to: "/energy",
+      icon: Zap,
+      title: "Energy",
+      description: "Track consumption and manage services",
+      iconColor: "text-yellow-500"
+    },
+    {
+      to: "/water",
+      icon: Droplets,
+      title: "Water",
+      description: "Monitor usage and manage supply",
+      iconColor: "text-blue-500"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
@@ -106,64 +83,28 @@ const Dashboard = () => {
         </motion.h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {stats.map((stat, index) => (
-            <motion.div
+          {stats.map((stat) => (
+            <StatsCard
               key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Card className="p-6 hover:shadow-lg transition-shadow">
-                <div className="flex items-center space-x-4">
-                  <div className={`p-3 rounded-full bg-gray-100 ${stat.color}`}>
-                    <stat.icon className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
+              title={stat.title}
+              value={stat.value}
+              icon={stat.icon}
+              color={stat.color}
+            />
           ))}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <Link to="/health">
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-white p-6 rounded-lg shadow-md"
-            >
-              <Heart className="h-12 w-12 text-red-500 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Healthcare</h3>
-              <p className="text-gray-600">Manage your health services and records</p>
-            </motion.div>
-          </Link>
-
-          <Link to="/energy">
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-white p-6 rounded-lg shadow-md"
-            >
-              <Zap className="h-12 w-12 text-yellow-500 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Energy</h3>
-              <p className="text-gray-600">Track consumption and manage services</p>
-            </motion.div>
-          </Link>
-
-          <Link to="/water">
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-white p-6 rounded-lg shadow-md"
-            >
-              <Droplets className="h-12 w-12 text-blue-500 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Water</h3>
-              <p className="text-gray-600">Monitor usage and manage supply</p>
-            </motion.div>
-          </Link>
+          {services.map((service) => (
+            <ServiceCard
+              key={service.title}
+              to={service.to}
+              icon={service.icon}
+              title={service.title}
+              description={service.description}
+              iconColor={service.iconColor}
+            />
+          ))}
         </div>
       </div>
     </div>
